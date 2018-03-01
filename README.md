@@ -1,2 +1,1 @@
-# PythonPreviewNote
-My python preview note.
+python知识点复习笔记。
