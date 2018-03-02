@@ -4,164 +4,125 @@
 
 | 函数名         | 作用                                       |
 | ----------- | :--------------------------------------- |
-| sqrt()      | 取数字的平方根,返回值类型为float. (例如:import math; math.sqrt(9) -> 3.0). |
-| divmod(x,y) | 这个函数也可以获得商和余数, 比如divmod(5,2)，返回的值为(2,1)，其中2为商，1为余数. |
-| bin()       | 二进制.                                     |
-| oct()       | 八进制.                                     |
+| sqrt()      | 取数字的平方根,返回值类型为float  (例如:import math; math.sqrt(9) -> 3.0)。 |
+| divmod(x,y) | 该函数也可以获得商和余数, 如divmod(5,2)，返回的值为(2,1)，其中2为商，1为余数。 |
+| bin()       | 二进制。                                     |
+| oct()       | 八进制。                                     |
 
 
 
-## 列表, 链表, queue(队列), stack(栈)的差异:
+## 列表, 链表, queue(队列), stack(栈)的差异
 
-### 列表:
+### 列表
 
-根据索引查找比较快，从最后追加也很快，命中cpu缓存概率比较大. 插入很慢，删除也很慢.
+根据索引查找比较快，从最后追加也很快，命中cpu缓存概率比较大。插入很慢，删除也很慢。
 
-### 链表:
+### 链表
 
-非线性结构,由前一个元素来获知下一元素的位置,不能使用索引. 
+非线性结构,由前一个元素来获知下一元素的位置,不能使用索引。
 
-查找很慢,但空间不必连续. 插入,插入,尾部追加很快.
+查找很慢,但空间不必连续。插入,插入,尾部追加很快。
 
-### 队列:
+### 队列
 
-队列是一个先入先出的的数据结构, 类似于银行排队. 【pop(0)和append】
+队列是一个先入先出的的数据结构, 类似于银行排队。 【pop(0)和append】
 
-### 栈:
+### 栈
 
-栈是一个后入先出/先入后出的数据结构,类似于洗碗堆盘子. 【append和pop()】
-
-
+栈是一个【后入先出/先入后出】的数据结构, 类似于洗碗堆盘子。 【append和pop()】
 
 ## 列表
 
-使用[ ]表示; 列表内元素可以是任意对象(数字,字符串,对象,列表等), 且元素可变.; 元素有顺序,可以使用索引; 是一种线性的数据结构.
-
-
+> 使用[ ]表示。
+>
+> 列表内元素可以是任意对象(数字,字符串,对象,列表等) 。
+>
+>  元素可变。
+>
+> 元素有顺序,可以使用索引。 
+>
+> 是一种线性的数据结构。
+>
+> list定义: 赋值即定义(即动态语言和静态语言的差别)。
+>
+> list是可变的,所以不能被hash。
+>
+> list赋值等同于浅拷贝。
 
 ### 方法 - 增
-| 方法                      | 注释                      | 备注                                       |
-| ----------------------- | ----------------------- | ---------------------------------------- |
-| L.append(object)        | 原地修改.                   | 时间复杂度O(1). 追加元素到列表L末尾.                   |
-| L.insert(index, object) | 原地修改.                   | insert 时间复杂度不确定,但会引起内存结构变化,索引超界会将元素追加到开头或最后.链表适合插入操作, 因为不需要挪动位置. |
-| L.extend(iterable)      | 原地修改.                   | iterable可以是 list、str等.                   |
-| +                       | 连接两个列表,产生新的列表.          |                                          |
-| *                       | 将本列表元素重复n次,重复操作,产生新的列表. |                                          |
+| 方法                      | 注释   | 备注                                       |
+| ----------------------- | ---- | ---------------------------------------- |
+| L.append(object)        | 增加元素 | 原地修改。时间复杂度O(1),  类似于双向列表。追加元素到列表L末尾。     |
+| L.insert(index, object) | 插入元素 | 原地修改。 insert 时间复杂度不确定, 但会引起内存结构变化, 索引超界会将元素追加到开头或最后.链表适合插入操作, 因为不需要挪动位置。 |
+| L.extend(iterable)      | 列表扩展 | 原地修改。 iterable可以是 list、str等。             |
+| +                       | 连接操作 | 连接操作连接两个列表, 产生新的列表。                      |
+| *                       | 重复操作 | 重复操作将本列表元素重复n次, 重复操作, 产生新的列表。            |
 
 
 
 ### 方法 - 删
 
-
-
-
+| 方法              | 注释          | 备注                                       |
+| --------------- | ----------- | ---------------------------------------- |
+| L.remove(value) | 根据value删除元素 | 原地修改, 从左到右匹配, 删除完会引起内存结构变化, 需注意效率问题。     |
+| L.pop([index])  | 根据索引值删除元素   | 删除完会弹出该index对应的值。从尾部删除效率很高,反之效率低, 删除有返回值,返回值为被删除的对象。 |
+| L.clear()       | 清除列表所有元素    | 原地修改。清除完会只剩一空列表, 需注意垃圾回收问题, 清除元素过多,对象释放, 会引发 gc 垃圾回收机制。 |
 
 ### 方法 - 改    
 
-
+| 方法                  | 注释        | 备注      |
+| ------------------- | --------- | ------- |
+| list[index] = value | 通过索引访问修改。 | 索引不能越界。 |
 
 ### 方法 - 查
 
+| 方法                              | 注释           | 备注                                       |
+| ------------------------------- | ------------ | ---------------------------------------- |
+| L.index(value, [start, [stop]]) | 查找元素对应的索引值。  | 时间复杂度为O(n)。通过value, 从指定区间查找, 匹配到第一个就立即返回, 匹配不到则抛异常 ValueError: xx is not in list。 |
+| L.count(value)                  | 匹配列表中元素出现次数。 | 时间复杂度为O(n)。                              |
 
+### 方法 - 翻转
 
+| 方法                                       | 注释      | 备注                                       |
+| ---------------------------------------- | ------- | ---------------------------------------- |
+| L.reverse()<br>or,<br>reversed(sequence) | 将列表元素反转 | 时间复杂度为O(1)。类似于双向列表。<br>reverse()原地翻转列表被元素。<br>reversed() 结果为可迭代对象。<br>reversed是python的内置函数。 |
 
+### 方法 - 排序
+| 方法                                       | 注释       | 备注                                       |
+| ---------------------------------------- | -------- | ---------------------------------------- |
+| L.sort(key=None, reverse=False)<br>or,<br> sorted(iterable,key=None, reverse=False) | 对列表内元素排序 | 时间复杂度为O(n)。类似于<br>默认升序排列, reverse为True,则降序排列,key指定如何排序。排序会引发效率问题。 <br>sort()原地对元素排序。<br>sorted()不会修改原列表。<br> sorted是python的内置函数。 |
 
+### 方法 - 复制
 
+| 方法              | 注释                                       | 备注                                       |
+| --------------- | ---------------------------------------- | ---------------------------------------- |
+| L.copy()        | shadow copy: 影子拷贝，也叫浅拷贝，遇到引用类型，只是复制了一个引用而已。 | 浅拷贝在内存中只额外创建第一层数据。                       |
+| copy.deepcopy() | 深拷贝, 由copy模块提供, 使用前需先导入。                 | 深拷贝在内存中将所有的数据重新创建一份（排除最后一层,即: python内部对字符串和数字的优化） |
 
-```python 
-In [123]: res1.sort(key=None, reverse=False)
+### 统计字符串的长度
+| 方法        | 注释            | 备注                                     |
+| --------- | ------------- | -------------------------------------- |
+| len(list) | 统计list内元素的个数。 | 返回列表元素个数。<br>时间复杂度O(1), 因为它内部有个字段是计数器。 |
 
-TypeError Traceback (most recent call last)
-<ipython-input-123-16bd8c3d3c94> in <module>()
-----> 1 res1.sort(key=None, reverse=False)
+### 字符比较 
 
-TypeError: unorderable types: int() < str()
+| 方法        | 注释                        |
+| --------- | ------------------------- |
+| is <br>== | is用内存id作比较。<br>'=='用值作比较。 |
 
-In [124]: res1.sort(key=str, reverse=False)
+## 随机数
 
-In [125]: res1
-Out[125]: [1, 2, 3, 4, 5, 6, 7, 8, 'a', 'asd', 'b']
+导入random模块。
 
-## In [127]: sorted(res1, key=int, reverse=False)
+| 方法                                 | 作用                                       |
+| ---------------------------------- | ---------------------------------------- |
+| randint(a, b)                      | 返回[a, b]之间的整数,左右都是闭区间。                   |
+| choice(seq)                        | 从非空序列的元素中随机挑选一个元素,取整数。                   |
+| randrange([start], stop, [, step]) | 从指定范围内按指定基数递增的集合中获取一个随机数，基数缺省值为1,前闭后开,可取步长。 |
+| shuffle(list) -> None              | 就地打乱列表元素。                                |
+| sample(population, k)              | 从样本空间或总体(序列或者集合类型)中随机取出k个不同的元素,返回一个新的列表。 |
 
-ValueError                                Traceback (most recent call last)
-<ipython-input-127-b1e784651af8> in <module>()
-----> 1 sorted(res1, key=int, reverse=False)
-
-ValueError: invalid literal for int() with base 10: 'a'
-
-In [128]: sorted(res1, key=str, reverse=False)
-Out[128]: [1, 2, 3, 4, 5, 6, 7, 8, 'a', 'asd', 'b']
-
-In [129]:
-```
-
-
-
-
-
-
-
-append、 reverse是O(1), 类似于双向列表。
-
-len() 是O(1), 因为它内部有个字段是计数器。
-
-'=='用值作比较. 
-is用内存id作比较.
-
-In [1]: a = 'aaa'
-
-In [2]: b = 'aaa'
-
-In [3]: id(a) is id(b)
-Out[3]: False
-
-In [4]: id(a) == id(b)
-Out[4]: True
-
-In [5]: id(a)
-Out[5]: 2061831307192
-
-In [6]: id(b)
-Out[6]: 2061831307192
-
-In [7]:
-
-> > > id(id(a)) is id(id(b))  # False.
-
-
-
-列表复制: L.copy() -> list — a shallow copy of L. 
-
-```
-shadow copy: 影子拷贝，也叫浅拷贝，遇到引用类型，只是复制了一个引用而已. 
-```
-
-深拷贝: copy模块提供了 deepcopy方法.
-注: 浅拷贝在内存中只额外创建第一层数据.
-深拷贝在内存中将所有的数据重新创建一份（排除最后一层,即: python内部对字符串和数字的优化）
-注意引用类型. 
-
-```
-list定义: 赋值即定义(即动态语言和静态语言的差别)
-list是可变的,所以不能被hash. 
-list赋值等同于浅拷贝.
-
-In [130]: res1
-Out[130]: [1, 2, 3, 4, 5, 6, 7, 8, 'a', 'asd', 'b']
-
-In [131]: import copy
-
-In [132]: res = copy.deepcopy(res1)
-
-In [133]: res
-Out[133]: [1, 2, 3, 4, 5, 6, 7, 8, 'a', 'asd', 'b']
-
-In [134]:
-```
-
-​	
-
+```python
 In [1]: import random
 
 In [2]: lst = [1, 2, 3, 4, 5, 'a', 'b', 'c']
@@ -189,146 +150,68 @@ In [17]: random.sample(alpha, 10)  # 从样本空间或总体(序列或者集合
 Out[17]: ['f', 'x', 'w', 'v', 'h', 't', 'i', 'b', 'o', 'n']
 
 In [18]:
-
-### 元组
-
-1. 一个有序的元素组成的集合. 
-   2.使用小括号()表示. 
-   3.元组是不可变对象(里面的引用类型可变).
-   4.可理解为只读.
-   支持索引(下标).
-
-tuple() -> empty tuple 
-tuple(iterable) -> tuple initialized from iterable's items. 
-
-In [7]: ttt = (1,)  # 构造一个元素的元组时,不加逗号会被误认为其他类型,此处只是以数字为例.
-
-元组只读，增删改的方法都没有 
-支持： 
-
-```
-查找元素: T.index(value, [start, [stop]]) -> integer -- return first index of value.
-注: 匹配到第一个就立即返回索引,匹配不到则报错ValueError.
-统计次数: T.count(value) -> integer -- return number of occurrences of value. 
-	注: 返回元组中匹配value的次数. 
-时间复杂度: index和count方法都是O(n),随着元组规模增大,效率下降. 
-len(tuple): 返回元组中元素的个数. 
 ```
 
-命名元组： 
-collections.namedtuple(typename, field_names, verbose=False, rename=False)  
+## 元组
 
-typename：此元组的名称； 
-field_names: 元祖中元素的名称,此字段有多种表达方式. 
-rename:如果元素名称中含有python的关键字，则必须设置为rename=True.
-verbose:默认就好；
+> 一个有序的元素组成的集合。 
+>
+> 使用小括号()表示。 
+>
+> 元组是不可变对象(里面的引用类型可变)。  
+>
+> 可理解为只读。 
+>
+> 支持索引(下标)。 
 
-# 其中field_names 有多种表达方式，如下
+### 初始化 
 
-student=collections.namedtuple('student','name age sex')
-student=cpllections.namedtuple('student',['name','age','sex'])
-student=cpllections.namedtuple('student','name,age,sex')
+```python
+tuple() -> empty tuple  
 
-In [1]: from collections import namedtuple
+tuple(iterable) -> tuple initialized from iterable's items.  
 
-In [2]: student = namedtuple('student', ['name', 'age', 'sex'])
-
-In [3]: student
-Out[3]: __main__.student
-
-In [4]: res = student(name = 'zhangsan', age = 22, sex = 'male')
-
-In [5]: res
-Out[5]: student(name='zhangsan', age=22, sex='male')
-
-In [6]: "My name is %s, age is %s, sex is %s" % res
-Out[6]: 'My name is zhangsan, age is 22, sex is male'
-
-In [7]:
-
-rename参数的作用：如果元素名称中含有python的关键字，则必须设置为rename=True.
-
-In [29]: from collections import namedtuple
-
-In [30]: color = namedtuple('color', 'all kind of  class color', rename = True)  # class是python关键字。
-
-In [31]: other_color = namedtuple('color', 'all age and age',rename = True)  # and是python关键字，重复的age被重命名。
-
-In [32]: color._fields
-Out[32]: ('all', 'kind', 'of', '_3', 'color')
-
-In [33]: other_color._fields
-Out[33]: ('all', 'age', '_2', '_3')
-
-In [34]:
-
-# ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Point = namedtuple(‘Point’, [‘x’, ‘y’], verbose=True)
-
-class Point(tuple):
-
-```
-'Point(x, y)'
+In [1]: tuple_element = (1, )  # 构造一个元素的元组时, 不加逗号会被误认为其他类型。
 ```
 
-```
-__slots__ = ()
-```
+### 方法 - 元组只读, 增删改的方法都没有 
 
-```
-_fields = ('x', 'y')
-```
+### 方法 - 查 
 
-```
-def __new__(_cls, x, y):
-    'Create new instance of Point(x, y)'
-    return _tuple.__new__(_cls, (x, y))
+| 方法                              | 注释               | 备注                                       |
+| ------------------------------- | ---------------- | ---------------------------------------- |
+| T.index(value, [start, [stop]]) | 返回value对应的索引值。   | 时间复杂度是O(n), 随着元组规模增大,效率下降。匹配到第一个就立即返回索引,匹配不到则报错ValueError。 |
+| T.count(value)                  | 返回元组中匹配value的次数。 | 时间复杂度是O(n), 随着元组规模增大,效率下降。匹配不到任何一个value就返回0。 |
+| len(tuple)                      | 返回元组中元素的个数。      | 时间复杂度O(1)。                               |
 
-@classmethod
-def _make(cls, iterable, new=tuple.__new__, len=len):
-    'Make a new Point object from a sequence or iterable'
-    result = new(cls, iterable)
-    if len(result) != 2:
-        raise TypeError('Expected 2 arguments, got %d' % len(result))
-    return result
+### 命名元组 - namedtuple 
 
-def __repr__(self):
-    'Return a nicely formatted representation string'
-    return 'Point(x=%r, y=%r)' % self
+namedtuple是继承自tuple的子类。namedtuple创建一个和tuple类似的对象，而且对象拥有可访问的属性。
 
-def _asdict(self):
-    'Return a new OrderedDict which maps field names to their values'
-    return OrderedDict(zip(self._fields, self))
+```python 
+from collections import namedtuple
 
-def _replace(_self, **kwds):
-    'Return a new Point object replacing specified fields with new values'
-    result = _self._make(map(kwds.pop, ('x', 'y'), _self))
-    if kwds:
-        raise ValueError('Got unexpected field names: %r' % kwds.keys())
-    return result
-
-def __getnewargs__(self):
-    'Return self as a plain tuple.  Used by copy and pickle.'
-    return tuple(self)
-
-__dict__ = _property(_asdict)
-
-def __getstate__(self):
-    'Exclude the OrderedDict from pickling'
-    pass
-
-x = _property(_itemgetter(0), doc='Alias for field number 0')
-
-y = _property(_itemgetter(1), doc='Alias for field number 1')
+语法： 
+namedtuple(typename, field_names, verbose=False, rename=False) 
+	Returns a new subclass of tuple with named fields.
+    
+# typename：此元组的名称;
+# field_names: 元祖中元素的名称,此字段有多种表达方式;
+# rename:如果元素名称中含有python的关键字，则必须设置为rename=True;
+# verbose:在构建之前打印类定义。
 ```
 
-# ---------------------------------------------------------------------------------------------------------------------------------------------
+其中`field_names` 有多种表达方式，如：
 
-冒泡算法。 
-时间复杂度: O(n2).
+```python 
+"name age sex"
+"name, age, sex"
+['name', 'age', 'sex']
+```
 
-字符串 str
+## 字符串
+
+
 
 ```
 S.strip([chars]) -> str
@@ -359,7 +242,7 @@ Out[19]: 'a@m@e@s@y'
 				行分隔符包括: \n, \r\n, \r等. 
 				
 			In [16]: name = 'amesyllsey'
-
+	
 			In [17]: name.split('es')
 			Out[17]: ['am', 'yllsey']
 ```
@@ -375,7 +258,7 @@ Out[19]: 'a@m@e@s@y'
 				
 		In [20]: name
 		Out[20]: 'amesyllsey'
-
+	
 		In [21]: name.partition('es')
 		Out[21]: ('am', 'es', 'yllsey')
 				
@@ -431,3 +314,6 @@ b = bytes('string',encoding='编码类型')  #利用内置bytes方法，将字�
 b = str.encode('编码类型')   # 利用字符串的encode方法编码成bytes，默认为utf-8类型
 
 bytes.decode('编码类型')：将bytes对象解码成字符串，默认使用utf-8进行解码。
+```
+
+```
