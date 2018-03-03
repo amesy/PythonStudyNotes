@@ -227,7 +227,7 @@ namedtuple(typename, field_names, verbose=False, rename=False)
 
 ### 方法 - 字符串不可变,  增和删的方法都没有 
 
-###方法 - 改 
+### 方法 - 改 
 
 | 方法                           | 功能                                 | 注释                                       |
 | ---------------------------- | ---------------------------------- | ---------------------------------------- |
@@ -316,37 +316,106 @@ namedtuple(typename, field_names, verbose=False, rename=False)
 
 ### bytes定义 
 
-> bytes() empty bytes. 
-> bytes(int) 指定字节的bytes,用0填充. 
-> bytes(iterable_of_ints) -> bytes[0,255]的int组成的iterable对象. 
-> bytes(string, encoding[,errors]) -> bytes等价于string.encode(). 
-> bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer 从一个字节序列或buffer中复制出一个新的不可变的bytes对象.
+> b = b' '         # 创建一个空的bytes。
+>
+> b = bytes()      # 创建一个空的bytes。
+>
+> b = b'hello'    #  直接指定这个hello是bytes类型。
+>
+> b = bytes('string',encoding='编码类型')   # 将字符串转换为指定编码的bytes, 等价于string.encode()。默认为utf-8类型。
+>
+> bytes(iterable_of_ints) -> bytes[0,255]的int组成的iterable对象。
+>
+> bytes.decode('编码类型')：将bytes对象解码成字符串，默认使用utf-8进行解码。
+>
 > 使用b前缀定义: 
 >
 > 	只允许基本ASCII使用形式b'abc9'. 
 > 	使用16进制表示b'\x41\x61'. 
 
 ### bytes操作 
+
+两种打印ASCII码的方法: 
+
+```python 
+In [1]: p1 = [i for i in bytes(range(97, 123)).decode()] 
+In [2]: p2 = [chr(i) for i in range(97, 123)]
+```
+
 和str类型类似,都是不可变类型,所以方法很多都一样,只是bytes的方法,输入和输出的都是bytes.
 
-	b'abcdef'.replace(b'f', b'k').
-	b'abc'.find(b'b')
+```python
+In [1]: b'python'.replace(b'th', b'and')
+Out[1]: b'pyandon'
+
+In [2]: b'python'.find(b'th')
+Out[2]: 2
+
+In [3]:
+```
+
 类方法 bytes.fromhex(string)
 	# string必须是2个字符的16进制的形式,'6162 6a 6b',空格将被忽略.
-	bytes.fromhex('6162 09 6a 6b00')
+	In [1]: bytes.fromhex('6162 09 6a 6b00')
+	Out[1]: b'ab\tjk\x00'
+	
+	In [2]:
 hex() 
-	返回16进制表示的字符串.
-	'abc'.encode().hex()
+	In [1]: 'python'.encode()
+	Out[1]: b'python'
+	
+	In [2]: 'python'.encode().hex()
+	Out[2]: '707974686f6e'
+	
+	In [3]:
 索引:
-	b'abcdef'[2] 返回该字节对应的数,int类型. 
+	# 返回该字节对应的数,int类型.  
+	In [1]: b'python'[2]
+	Out[1]: 116
+	
+	In [2]:
 
 ### bytearray定义 
 
-b = b''         # 创建一个空的bytes
-b = byte()      # 创建一个空的bytes
-b = b'hello'    #  直接指定这个hello是bytes类型
-b = bytes('string',encoding='编码类型')  #利用内置bytes方法，将字符串转换为指定编码的bytes
-b = str.encode('编码类型')   # 利用字符串的encode方法编码成bytes，默认为utf-8类型
+> bytearray() 空bytearray。
+>
+> bytearray(int) 指定字节的bytearray,被0填充。
+>
+> bytearray(iterable_of_ints)  ---> bytearray[0,255]的int组成的iterable对象。 
+>
+> bytearray(string, encoding[,errors])  ---> bytearray近似于string.encode(),不过返回可变对象。  
+>
+> **注: b前缀定义的类型是bytes类型。**
 
-bytes.decode('编码类型')：将bytes对象解码成字符串，默认使用utf-8进行解码。
+### bytearray操作 
+
+```python 
+# 和bytes类型的方法相同。 
+# 其他操作如下:
+append(int) # 尾部追加一个元素。 
+insert(index, int)   # 在指定索引位置插入元素。 
+extend(iterable_of_ints)   # 将一个可迭代的整数集合追加到当前bytearray。 
+pop(index=-1)   # 从指定索引上移除元素,默认从尾部移除。 
+remove(value)   # 找到第一个value移除,找不到抛异常ValueError。 
+注: 上述方法若使用int类型,值在[0, 255]。 
+clear()   # 清空bytearray.  
+reverse()   # 翻转bytearray,就地修改.
+```
+
+```python 
+In [1]: b = bytearray()
+
+In [2]: b.append(97)
+
+In [3]: b
+Out[3]: bytearray(b'a')
+
+In [4]: bytearray(range(65, 91)).decode()
+Out[4]: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+In [5]: bytearray(range(65, 91)).decode().lower()
+Out[5]: 'abcdefghijklmnopqrstuvwxyz'
+
+In [6]:
+```
 
