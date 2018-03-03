@@ -573,8 +573,130 @@ In [6]:
 
 ### 基本概念及初始化
 
+基本概念: 
+
+> key-value 键值对的数据的集合。
+> 可变, 无序, key 不重复。
+> 比 list 占内存。
+
+初始化: 
+
+```python 
+d = dict()  或  d = {}      
+dict(**kwargs)  # 使用name=value对初始化一个字典。
+dict(iterable, **kwargs)  #使用可迭代对象和"name=value对"构造字典,不过可迭代对象的元素必须是一个二元结构。
+>>> d = dict(((1,'a'),(2,'b'))) 或 d = dict(([1,'a'],[2,'b'])) 
+dict(mapping,**kwarg)  # 使用一个字典构建另一个字典。
+>>> d = {'a':10, 'b':20,'c':None,'d':[1,2,3]}   
+# 类方法: 
+dict.fromkeys(iterable,value) 
+>>> d = dict.fromkeys(range(5))
+>>> d = dict.fromkeys(range(5),0) 
+```
+
+```python 
+In [1]: dict(name='amesy')
+Out[1]: {'name': 'amesy'}
+    
+In [2]: dict((('age', 22), ('sex', 'male')))
+Out[2]: {'age': 22, 'sex': 'male'}
+
+In [3]: d = dict.fromkeys(range(5))
+
+In [4]: d
+Out[4]: {0: None, 1: None, 2: None, 3: None, 4: None}
+
+In [5]: dd = dict.fromkeys(range(5), 'py')
+
+In [6]: dd
+Out[6]: {0: 'py', 1: 'py', 2: 'py', 3: 'py', 4: 'py'}
+
+In [7]:
+```
+
+###元素的访问
+
+| 方法                        | 功能              | 注释                                       |
+| ------------------------- | --------------- | ---------------------------------------- |
+| d[key]                    | 返回key对应的值value。 | key不存在则抛出异常KeyError                      |
+| get(key[,default])        | 返回key对应的值value。 | key不存在返回缺省值,如果没有缺省值就返回None。              |
+| setdefault(key[,default]) | 返回key对应的值value  | **key不存在则添加kv对**, value为default,缺省值为None |
+
+### 增加和修改元素 
+
+| 方法                      | 功能                     | 注释                                       |
+| ----------------------- | ---------------------- | ---------------------------------------- |
+| d[key] = value          | 将key对应的值修改为value。      | key不存在则添加新的k/v对。                         |
+| update([other]) -> None | 使用另一个字典other的kv对更新本字典。 | 就地修改。<br>key不存在,就添加。<br>key存在,覆盖已存在的key对应的值。 |
+
+### 删除元素 
+
+| 方法                 | 注释                                       |
+| ------------------ | ---------------------------------------- |
+| pop(key[,default]) | key存在,移除它,并返回它的value。<br> key不存在,返回给定的default。 <br> default未设置,key不存在则抛异常KeyError。 |
+| popitem()          | 移除并返回一个任意的键值对。<br> 字典为empty,抛出异常KeyError |
+| clear()            | 清空字典。                                    |
+
+### 删除字典 
+
+使用 `del 语句`
+
+### 遍历字典 
+
+`for ... in dict` 
+
+> py3中, keys, values, items方法返回一个类似生成器的可迭代对象, 不会把函数的返回结果复制到内存中。 
+>
+> py2中,上面的方法会返回一个新的列表,占据新的内存空间.  
+>
+> 所以python2建议用 iterkeys, itervalues, iteritems 版本, 返回一个迭代器, 而不是一个copy。
+
+```python 
+In [1]: d = dict.fromkeys(range(3), 'py')
+    
+In [2]: d
+Out[2]: {0: 'py', 1: 'py', 2: 'py'}
+
+In [3]: [i for i in d]
+Out[3]: [0, 1, 2]
+
+In [4]: [i for i in d]
+Out[4]: [0, 1, 2]
+
+In [5]: [i for i in d.keys()]
+Out[5]: [0, 1, 2]
+
+In [6]: [i for i in d.values()]
+Out[6]: ['py', 'py', 'py']
+
+In [7]: [i for i in d.items()]
+Out[7]: [(0, 'py'), (1, 'py'), (2, 'py')]
+
+In [8]:
+```
+
+### 字典的key 
+
+> 字典的key的要求和set的元素要求一致。
+>
+> hashable可哈希才能作为key。
+
+### 工厂函数 - defaultdict 缺省字典
+
+> defaultdict是Python内建dict类的一个子类。
+
+```python 
+# 用法:  
+defaultdict(default_factory[, ...]) --> dict with default factory.
+
+# 第一个参数是default_factory,缺省是None,它提供一个初始化函数,可以是list,tuple,set和dict等。 
+# 它的其他功能与dict相同,当key不存在时,会调用这个工厂函数来生成key对应的value,即提供一个默认值,从而避免KeyError异常. 
+```
 
 
+
+
+ 
 
 
  
