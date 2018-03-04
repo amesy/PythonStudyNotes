@@ -687,16 +687,181 @@ In [8]:
 
 ```python 
 # 用法:  
-defaultdict(default_factory[, ...]) --> dict with default factory.
+defaultdict(default_factory[, ...]) ---> dict with default factory.
 
 # 第一个参数是default_factory,缺省是None,它提供一个初始化函数,可以是list,tuple,set和dict等。 
 # 它的其他功能与dict相同,当key不存在时,会调用这个工厂函数来生成key对应的value,即提供一个默认值,从而避免KeyError异常. 
 ```
 
+示例1：迭代1-100, 分类保存到字典中。 
+
+方法1：
+
+```python 
+# 常规做法
+d = {}
+for i in range(100):
+    if i > 50:
+        if 'k1' not in d:
+            d['k1'] = [i]
+        else:
+            d['k1'].append(i)
+    else:
+        if 'k2' not in d:
+            d['k2'] = [i]
+        else:
+            d['k2'].append(i)
+
+print(d)
+```
+
+方法2： 
+
+```python 
+# setdefault
+d = {}
+for i in range(100):
+    if i > 50:
+        d.setdefault('k1', [])
+        d['k1'].append(i)
+    else:
+        d.setdefault('k2', [])
+        d['k2'].append(i)
+
+print(d)
+```
+
+方法3： 
+
+```python 
+from collections import defaultdict
+d = defaultdict(list)
+for i in range(100):
+    d['k1'].append(i) if i > 50 else d['k2'].append(i)
+
+print(d)
+```
+
+示例2： 
+
+```python 
+In [1]: from collections import defaultdict
+   ...: lst = [('red', 1), ('blue', 2), ('red', 3), ('blue', 4), ('red', 1), ('blue', 4)]
+   ...: d = defaultdict(set)
+   ...: for k, v in lst:
+   ...:     d[k].add(v)
+   ...: print(d)
+   ...:
+defaultdict(<class 'set'>, {'blue': {2, 4}, 'red': {1, 3}})
+
+In [2]:
+```
+
+分析: 
+
+```python 
+collections.defaultdict(list)使用起来效果和运用dict.setdefault()比较相似。 
+python help也提到了。 
+工厂函数这种方法和dict.setdefault()等价，但是要更快。
+defaultdict可以利用工厂函数，给初始keyi带来一个默认值,这个默认值也许是空的list[],defaultdict(list);也许是0, defaultdict(int). 
+```
+### 有序字典 - OrderedDict 
+
+> python中的字典是无序的,因为它是按照hash来存储的,但collections模块自带的子类OrderedDict则可以很好的解决这个问题。
+
+#### 示例
+
+示例1： 
+
+```python 
+from collections import OrderedDict
+
+d = OrderedDict()
+d['foo'] = 1
+d['bar'] = 2
+d['spam'] = 3
+d['grok'] = 4
+# Outputs "foo 1", "bar 2", "spam 3", "grok 4"
+for key in d:
+    print(key, d[key])
+```
+
+示例2：
+
+```python 
+In [1]: from collections import OrderedDict
+
+# regular unsorted dictionary
+In [2]: d = {'banana': 3, 'apple': 4, 'pear': 1, 'orange': 2}
+
+# dictionary sorted by key 
+In [3]: OrderedDict(sorted(d.items(), key=lambda t: t[0]))
+Out[3]: OrderedDict([('apple', 4), ('banana', 3), ('orange', 2), ('pear', 1)])
+
+# dictionary sorted by value    
+In [4]: OrderedDict(sorted(d.items(), key=lambda t: t[1]))
+Out[4]: OrderedDict([('pear', 1), ('orange', 2), ('banana', 3), ('apple', 4)])
+
+# dictionary sorted by length of the key string    
+In [5]: OrderedDict(sorted(d.items(), key=lambda t: len(t[0])))
+Out[5]: OrderedDict([('pear', 1), ('apple', 4), ('banana', 3), ('orange', 2)])
+
+In [6]:
+```
+
+#### 方法 -  move_to_end
+
+> Move an existing *key* to either end of an ordered dictionary. The item is moved to the right end if *last* is true (the default) or to the beginning if *last* is false. Raises `KeyError` if the *key* does not exist:
+
+```python 
+In [1]: name = 'amesy'
+
+In [2]: '-'.join(name)
+Out[2]: 'a-m-e-s-y'
+
+In [3]: from collections import OrderedDict
+
+In [4]: d = OrderedDict.fromkeys('abcde')
+
+In [5]: d
+Out[5]: OrderedDict([('a', None), ('b', None), ('c', None), ('d', None), ('e', None)])
+
+In [6]: d.keys()
+Out[6]: odict_keys(['a', 'b', 'c', 'd', 'e'])
+
+In [7]: d.move_to_end('b')
+
+In [8]: d
+Out[8]: OrderedDict([('a', None), ('c', None), ('d', None), ('e', None), ('b', None)])
+
+In [9]: ''.join(d.keys())
+Out[9]: 'acdeb'
+
+In [10]:
+```
+
+
+总结： 
+
+```python 
+OrderedDict 内部维护着一个根据键插入顺序排序的双向链表。每次当一个新的元素插入进来的时候,它会被放到链表的尾部。对于一个已经存在的键的重复赋值不会改变键的顺序。
+需要注意的是，一个 OrderedDict 的大小是一个普通字典的两倍，因为它内部维护着另外一个链表。 所以如果你要构建一个需要大量 OrderedDict 实例的数据结构的时候（比如读取 100,000 行 CSV 数据到一个 OrderedDict 列表中去）， 那么你就得仔细权衡一下是否使用 OrderedDict 带来的好处要大过额外内存消耗的影响。
+```
+
+## 解析式/推导式、生成器 
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 
  
