@@ -959,7 +959,7 @@ Out[8]: list_iterator
 
 **图示**
 
-![iterator](C:\Users\31948\Desktop\iterator.JPG)
+![iterator](http://mmbiz.qpic.cn/mmbiz_png/rO1ibUkmNGMmicyvqybd0qMIa0MqjOJ5192yVTFO3w2iczzC0YP3amodXLVX9TdFhZmCRQsMsw9dlKECiaEcDWuIUA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1)
 
 
 
