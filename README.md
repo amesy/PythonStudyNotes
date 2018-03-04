@@ -959,7 +959,7 @@ Out[8]: list_iterator
 
 **图示**
 
-![](‪C:\Users\31948\Desktop\iterator.JPG)
+![iterator](C:\Users\31948\Desktop\iterator.JPG)
 
 
 
