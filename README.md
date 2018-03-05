@@ -165,9 +165,9 @@ In [18]:
 ### 初始化 
 
 ```python
-tuple() -> empty tuple  
+tuple() ——> empty tuple  
 
-tuple(iterable) -> tuple initialized from iterable's items.  
+tuple(iterable) ——> tuple initialized from iterable's items.  
 
 In [1]: tuple_element = (1, )  # 构造一个元素的元组时, 不加逗号会被误认为其他类型。
 ```
@@ -490,7 +490,6 @@ In [4]: s2
 Out[4]: {0, 1, 2, 3, 4}
 
 In [5]: s3 = {(1, 2, 3), [1, 2, 3], {'name': 'amesy', 'sex': 'male'}}
----------------------------------------------------------------------------
 TypeError                                 Traceback (most recent call last)
 <ipython-input-9-b2999f24648f> in <module>()
 ----> 1 s3 = {(1, 2, 3), [1, 2, 3], {'name': 'amesy', 'sex': 'male'}}
@@ -687,7 +686,7 @@ In [8]:
 
 ```python 
 # 用法:  
-defaultdict(default_factory[, ...]) ---> dict with default factory.
+defaultdict(default_factory[, ...]) ——> dict with default factory.
 
 # 第一个参数是default_factory,缺省是None,它提供一个初始化函数,可以是list,tuple,set和dict等。 
 # 它的其他功能与dict相同,当key不存在时,会调用这个工厂函数来生成key对应的value,即提供一个默认值,从而避免KeyError异常. 
@@ -1207,7 +1206,7 @@ next(iterator): 从一个迭代器中取元素,如果元素都取过了,再次�
 **语法** 
 
 ```python 
-zip(*iterables) --> zip object
+zip(*iterables) ——> zip object
 ```
 
 > 像拉链一样,把多个可迭代对象合并在一起,返回一个迭代器。
@@ -1241,6 +1240,8 @@ In [2]:
 
 > 要求x与y的维数相同，当两者具有相同的行数与列数时，正常组合对应位置元素。
 > 当x与y的行数或列数不同时, 取两者结构中最小的行数和列数，依照最小的行数和列数将对应位置的元素进行组合。
+
+
 
 
 
