@@ -492,7 +492,7 @@ Out[4]: {0, 1, 2, 3, 4}
 In [5]: s3 = {(1, 2, 3), [1, 2, 3], {'name': 'amesy', 'sex': 'male'}}
 TypeError                                 Traceback (most recent call last)
 <ipython-input-9-b2999f24648f> in <module>()
-----> 1 s3 = {(1, 2, 3), [1, 2, 3], {'name': 'amesy', 'sex': 'male'}}
+——> 1 s3 = {(1, 2, 3), [1, 2, 3], {'name': 'amesy', 'sex': 'male'}}
 
 TypeError: unhashable type: 'list' # set里面只能放置可哈希元素,list不可哈希,故报错.
 
