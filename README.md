@@ -10,7 +10,7 @@
 
 # 文章目录
 
-## 基础部分
+## [基础部分](https://github.com/amesy/PythonPreviewNote/blob/master/%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86.md)
 
 ## 高级部分 
 
