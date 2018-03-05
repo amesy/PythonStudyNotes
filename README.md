@@ -927,10 +927,17 @@ Out[3]: {'0': 3, '1': 3, '2': 3}
 - 定义了iter方法。可以随意返回。
 - 可以调用iter(obj)的对象，并且返回一个iterator。
 
+> 可以迭代,但是未必有序,未必可索引. 
+> 可迭代对象: list,tuple,str,bytes,bytearray,range,set,dict,iterator. 
+> 可以使用成员操作符in和not in,in本质上就是在遍历对象.
+
 **迭代器(Iterator)** ：可被next()函数调用并不断返回下一个值的对象，需满足如下要求。 
 
-- 定义了**iter**方法，但是必须返回自身。
-- 定义了next方法, 在python3.x是**next**。用来返回下一个值, 并且当没有数据了, 抛出StopIteration可以保持当前的状态。
+- 一定是可迭代对象,具备可迭代对象的特征。
+
+
+- 定义了**iter**方法，但是必须返回自身，即通过iter方法把一个可迭代对象封装成迭代器。
+- 定义了next方法来迭代 迭代器对象,。python3.x中是**next**。用来返回下一个值, 并且当没有数据了, 抛出StopIteration可以保持当前的状态。
 
 迭代器就像一个懒加载的工厂，等到有人需要的时候才给它生成值返回，没调用的时候就处于休眠状态等待下一次调用。
 
@@ -966,7 +973,7 @@ Out[8]: list_iterator
 ## 生成器 
 
 - 带有 **yield** 关键字的的函数在 Python 中被称之为 generator(生成器)。Python 解释器会将带有 **yield** 关键字的函数视为一个 generator 来处理。一个函数或者子程序都只能 return 一次，但是一个生成器能暂停执行并返回一个中间的结果 —— *这就是 yield 语句的功能 : 返回一个中间值给调用者并暂停执行。*
-- 生成器其实是一种特殊的迭代器，不过这种迭代器更加优雅。它不需要再像上面的类一样写 `__iter__()`和 `__next__()`方法了，只需要一个 `yiled`关键字。 生成器一定是迭代器（反之不成立），因此任何生成器也是以一种懒加载的模式生成值。
+- **生成器其实是一种特殊的迭代器**，不过这种迭代器更加优雅, 这句话反过来不成立。它不需要再像上面的类一样写 `__iter__()`和 `__next__()`方法了，只需要一个 `yiled`关键字。 生成器一定是迭代器（反之不成立），因此任何生成器也是以一种懒加载的模式生成值。
 
 
 
@@ -1008,15 +1015,236 @@ for _ in range(5):
 
 > 两者的语法非常相似，但生成器表达式返回的不是一个列表类型对象，而是一个生成器对象，生成器是一个内存使用友好的结构。在需要迭代一个对象时，应该优先考虑使用生成器替代迭代器，使用生成器表达式替代列表解析。当然这并不是绝对的。迭代器和生成器是 Python 很重要的特性，对其有很好的理解能够写出更加 Pythonic 的代码。
 
+## datetime模块 
+
+### 功能
+
+> 对日期、时间、时间戳的处理。 
+
+### 用途 
+
+> 在开发工作中，经常需要用到日期与时间，如： 
+>
+> - 作为日志信息的内容输出。
+> - 计算某个功能的执行时间。
+> - 用日期命名一个日志文件的名称。
+> - 记录或展示某文章的发布或修改时间。
+> - 其他。
+
+### datetime类 
+
+| 方法                              | 功能                                                         |
+| --------------------------------- | ------------------------------------------------------------ |
+| today()                           | 返回本地时区当前时间的datetime对象。                         |
+| now(tz=None)                      | 返回当前时间的datetime对象, 时间到微妙, 如果tz为None, 返回和today()一样。 |
+| utcnow()                          | 没有时区的当前时间。                                         |
+| fromtimestamp(timestamp, tz=None) | 根据给定的时间戮, 返回一个datetime对象。                     |
+
+示例： 
+
+```python 
+In [1]: import datetime
+
+In [2]: datetime.datetime.now()
+Out[2]: datetime.datetime(2018, 3, 5, 12, 43, 41, 76299)
+
+In [3]: datetime.datetime.utcnow()
+Out[3]: datetime.datetime(2018, 3, 5, 4, 43, 53, 488395)
+
+In [4]: datetime.datetime.fromtimestamp(2018-3-5)
+Out[4]: datetime.datetime(1970, 1, 1, 8, 33, 30)
+
+In [5]:
+```
+
+### datetime对象 
+
+> 构造方法: datetime.datetime(2018,3, 4, 11, 29, 43, 79043)
+>
+> year,  month, day, hour, minute, second, microsecond, 取datetime对象的年月日时分秒及微秒。
+
+| 方法          | 功能                                                         |
+| ------------- | ------------------------------------------------------------ |
+| timestamp()   | 返回一个到微秒的时间戳。<br>时间戳: 格林威治时间"1970-01-01 00:00"到现在的秒数。 |
+| weekday()     | 返回星期的天, 周一 0 ，  周日 6                              |
+| isoweekday()  | 返回星期的天, 周一 1 ，  周日 7                              |
+| date()        | 返回日期date对象。                                           |
+| time()        | 返回时间time对象。                                           |
+| replace()     | 修改并返回新的对象。                                         |
+| isocalendar() | 返回一个三元组 (年, 周数, 周的天)                            |
+
+```python 
+In [1]: import datetime
+
+In [2]: datetime.datetime.now().timestamp()
+Out[2]: 1520225470.531848
+
+In [3]: datetime.datetime.now().weekday()
+Out[3]: 0
+
+In [4]: datetime.datetime.now().time()
+Out[4]: datetime.time(12, 52, 5, 53374)
+
+In [5]: datetime.datetime.now().replace(2018, 3, 1, 9, 21, 55)
+Out[5]: datetime.datetime(2018, 3, 1, 9, 21, 55, 569714)
+
+In [6]: datetime.datetime.now().replace(2018-3-3)
+Out[6]: datetime.datetime(2012, 3, 5, 12, 53, 55, 799515)
+
+In [7]: datetime.datetime.now().isocalendar()
+Out[7]: (2018, 10, 1)
+
+In [8]:
+```
+
+### 日期格式化
+
+> 类方法 strptime(date_string, format), 返回datetime对象。 
+>
+> 对象方法 strftime(format), 返回字符串。
+>
+> 字符串format函数格式化。
+
+```python 
+In [1]: import datetime
+
+In [2]: datetime.datetime.strptime('20180305', '%Y%m%d')
+Out[2]: datetime.datetime(2018, 3, 5, 0, 0)
+
+In [3]: datetime.datetime.now().strftime('%Y-%m-%d')
+Out[3]: '2018-03-05'
+
+In [4]:
+```
+
+### timedelta对象 
+
+datetime.timedelta 对象代表两个时间之间的的时间差，两个date或datetime对象相减时可以返回一个timedelta对象。
+
+**构造函数**
+
+```python 
+class datetime.timedelta([days[, seconds[, microseconds[, milliseconds[, minutes[, hours[, weeks]]]]]]])
+# 所有参数可选，且默认都是0，参数的值可以是整数，浮点数，正数或负数。
+```
+
+> 内部只存储**days，seconds，microseconds**，其他参数的值会自动按如下规则抓转换：
+>
+> - 1 millisecond（毫秒） 转换成 1000 microseconds（微秒）
+> - 1 minute 转换成 60 seconds
+> - 1 hour 转换成 3600 seconds
+> - 1 week转换成 7 days
+
+**时间差** 
+
+`total_seconds()` 获取两个时间之间的差的总秒数。 
+
+```python 
+In [1]: import datetime
+
+In [2]: t1 = datetime.datetime.strptime("2018-03-05 10:30:00", "%Y-%m-%d %H:%M:%S")
+
+In [3]: t2 = datetime.datetime.strptime("2018-03-05 12:30:00", "%Y-%m-%d %H:%M:%S")
+
+In [4]: total_interval_time = (t2 - t1).total_seconds()
+
+In [5]: total_interval_time
+Out[5]: 7200.0
+
+In [6]:
+```
+
+### 标准库 - time 
+
+`time.sleep(SECOND)` 将调用线程挂起来等待指定的秒数。 
+
+```python 
+In [1]: import time
+
+In [2]: time.sleep(1)  # 将等待1s.
+
+In [3]:
+```
+
+## 常用的内建函数 
+
+```python 
+标识id: 返回对象的唯一标识,Cpython返回内存地址。  
+哈希hash(): 返回一个对象的哈希值。 
+类型type(): 返回对象的类型。 
+类型转换:
+	float(),int(),bin(),hex(),oct(),bool(),list(),tuple(),dict(),set(),bytes(),bytearray()
+输入input([prompt]): 接收用户输入,返回一个字符串。 
+打印: 
+    print(*object,sep='', end='\n',file=sys.stdout,flush=False) 
+    打印输出,默认使用空格分割,换行结尾,输出到控制台。
+对象长度len(): 返回一个集合类型的元素个数。
+isinstance(obj,class_or_tuple): 判断对象obj是否属于某种类型或者元组中列出的某个类型。
+    isinstance(True, int)
+issubclass(cls,class_or_tuple): 判断类型cls是否是某种类型的子类或元组中列出的耨个类型的子类。
+    issubclass(bool, int) 
+绝对值obs(x): x为数值。
+最大值max(), 最小值min() 
+	返回iterable对象中的最大或最小值. 
+	返回多个参数中的最大或最小值. 
+round(x) 返回浮点数x的四舍五入值。
+pow(x, y): 等价于x**y. 
+range() 创建一个整数列表，一般用在 for 循环中。
+divmod(x, y): 等价于tuple(x//y,x%y) 
+sum(iterable[,start]): 求和. 
+chr(i): 给一个一定范围的整数返回对应的字符. 如chr(97), chr(2003). 
+ord(c): 返回字符对应的整数. 如ord('a'), ord('中'). 
+str(), repr(), ascii() 
+sorted(): 排序. 
+reversed(): 翻转. 
+enumerate(): 枚举. 
+iter(iterable): 迭代器 
+next(iterator): 从一个迭代器中取元素,如果元素都取过了,再次取会抛异常Stopiteration. 
+```
+
+### 拉链函数 - zip 
+
+**语法** 
+
+```python 
+zip(*iterables) --> zip object
+```
+
+> 像拉链一样,把多个可迭代对象合并在一起,返回一个迭代器。
+>
+> 将每次从不同对象中取到的元素合并成一个元组。 
+
+**示例** 
+
+```python 
+In [1]: x = [1, 2, 3]
+
+In [2]: y = [4, 5, 6]
+
+In [3]: zip(x, y)
+Out[3]: <zip at 0x1e3f87272c8>  #　返回迭代器, 可用next()方法迭代。
+
+In [4]: list(zip(x, y))
+Out[4]: [(1, 4), (2, 5), (3, 6)]
+
+In [5]:
+```
+
+```python
+In [1]: list(zip(range(10), range(10), range(5), range(10)))
+Out[1]: [(0, 0, 0, 0), (1, 1, 1, 1), (2, 2, 2, 2), (3, 3, 3, 3), (4, 4, 4, 4)]
+
+In [2]:
+```
+
+注 
+
+> 要求x与y的维数相同，当两者具有相同的行数与列数时，正常组合对应位置元素。
+> 当x与y的行数或列数不同时, 取两者结构中最小的行数和列数，依照最小的行数和列数将对应位置的元素进行组合。
 
 
 
-
-
-
-
-
-
+**--- 以上, 就是python基础内容的总结。其中内容不完善之处，会不断更新添加修改。**
 
 
 
