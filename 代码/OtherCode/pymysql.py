@@ -35,7 +35,7 @@ class MysqlSearch:
         offset = (int(page) - 1) * int(page_size)
         # 准备sql语句
         select_sql = "select * from `news` where `author` = %s order by `id` desc limit %s, %s;"
-        # 找到游标
+        # 获取游标
         self.cursor = self.conn.cursor(DictCursor)
         # 执行sql
         self.cursor.execute(select_sql, (author, offset, page_size, ))
@@ -57,7 +57,7 @@ class MysqlSearch:
 
         # 准备sql语句
         select_sql = "select * from `news` where `types` = %s order by `id` desc;"
-        # 找到游标
+        # 获取游标
         self.cursor = self.conn.cursor()
         # 执行sql
         self.cursor.execute(select_sql, ('娱乐', 2,2))
@@ -79,7 +79,6 @@ class MysqlSearch:
             self.cursor = self.conn.cursor()
             # 执行sql, 返回受影响行数.
             self.cursor.execute(sql, ('thirty-one', '第31条', '娱乐', 'http://thirty-one.png', 'amesy', '1', '1',))
-            self.cursor.execute(sql, ('thirty-one', '第31条', '娱乐', 'http://thirty-one.png', 'amesy', 'er', '1',))
             # 提交事务，sql报错则不会提交.
             self.conn.commit()
         except:
@@ -93,14 +92,12 @@ class MysqlSearch:
 
 def main():
     obj = MysqlSearch()
+	obj.add_one()
     # obj.get_one()
-
     # rest = obj.get_one1('amesy', 2, 3)
     # for item in rest:
     #     print(item)
     #     print('---------------------------')
-
-    obj.add_one()
 
 if __name__ == '__main__':
     main()
