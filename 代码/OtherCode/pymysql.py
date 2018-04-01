@@ -92,7 +92,7 @@ class MysqlSearch:
 
 def main():
     obj = MysqlSearch()
-	obj.add_one()
+    obj.add_one()
     # obj.get_one()
     # rest = obj.get_one1('amesy', 2, 3)
     # for item in rest:
