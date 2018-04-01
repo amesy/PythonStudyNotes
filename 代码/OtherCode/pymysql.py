@@ -8,7 +8,7 @@ class MysqlSearch:
 
     def get_conn(self):
         try:
-            # 获取连接
+            # 获取连接.
             self.conn = pymysql.connect(
                 host = '10.68.7.20',
                 user = 'mysqlcli',
@@ -17,7 +17,6 @@ class MysqlSearch:
                 port = 3306,
                 charset = 'utf8'
             )
-
         except pymysql.Error as e:
             print("Error: {0}".format(13))
 
