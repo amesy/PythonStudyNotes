@@ -14,15 +14,10 @@
 ## 第一个flask程序
 用pycharm新建一个flask项目，如下图：
 
-![picture1](https://raw.githubusercontent.com/amesy/amesy.github.io/master/assets/_images/flask/img01.png)
+![picture1](https://raw.githubusercontent.com/amesy/PythonStudyNotes/master/images/flask/img01.png)
 
 然后单击"创建"即可。
-创建完成后可以看到，默认已经有了一个app.py文件，直接点击运行。
-
-之后在浏览器中输入 http://127.0.0.1:5000 就能看到hello world了。需要说明一点的是，app.run这种方式只适合本地开发，如果在生产环境中，应该使用Gunicorn或者uWSGI来启动。如果是在终端运行的，可以按ctrl+c来让服务停止。
-
-### 程序代码详解
-
+创建完成后，新建helloworld.py文件编写第一个flask程序：
 ```python
 # 从flask框架中导入Flask类.
 from flask import Flask
@@ -36,13 +31,13 @@ def hello_world():
     return 'Hello World!'
 
 if __name__ == '__main__':
-    # 运行本项目，默认的host是127.0.0.1，port为5000,也可以自定义host和port.
-    app.run()
-    """
-    自定义host、port和debug模式
+    # 运行本项目，自定义host、port和debug模式。默认的host是127.0.0.1，port为5000,debug为False.
     app.run(host="0.0.0.0", port=9000, debug=True)
-    """
 ```
+
+然后在浏览器中输入 http://127.0.0.1:9000 就能看到hello world页面了。
+
+注：app.run这种方式只适合本地开发，如果在生产环境中，应该使用Gunicorn或者uWSGI来启动。如果是在终端运行的，可以按ctrl+c来让服务停止。
 
 **设置DEBUG模式**
 
@@ -58,16 +53,72 @@ if __name__ == '__main__':
 **PIN码**
 
 如果想要在网页上调试代码，则应该输入`PIN`码。
+如图在程序中写有bug的代码，执行后在浏览器访问:
 
-# config笔记：
+```python
+from flask import Flask
 
-### 使用`app.config.from_object`的方式加载配置文件：
-1. 导入`import config`。
-2. 使用`app.config.from_object(config)`。
+app = Flask(__name__)
+# app.debug=True
+app.config.update(DEBUG=True)
+
+@app.route('/')
+def hello_world():
+    a = 1
+    b = 0
+    c = a / b
+    return c
 
 
-### 使用`app.config.from_pyfile`的方式加载配置文件：
-这种方式不需要`import`，直接使用`app.config.from_pyfile('config.py')`就可以了。
-注意这个地方，必须要写文件的全名，后缀名不能少。
-1. 这种方式，加载配置文件，不局限于只能使用`py`文件，普通的`txt`文件同样也适合。
-2. 这种方式，可以传递`silent=True`，那么这个静态文件没有找到的时候，不会抛出异常。
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=9000)
+```
+
+(![img02](https://raw.githubusercontent.com/amesy/PythonStudyNotes/master/images/flask/img02.png))
+
+然后在弹出的框中输入pycharm的运行状态栏中的Debugger PIN，即可进行调试操作。
+
+(![img03](https://raw.githubusercontent.com/amesy/PythonStudyNotes/master/images/flask/img03.png))
+
+## 配置文件
+Flask项目的配置，都是通过`app.config`对象来进行配置的。比如使用`app.config.update(DEBUG=True)`来配置项目处于DEBUG模式。在Flask项目中，有四种方式进行项目的配置：
+1. 直接硬编码
+
+```python
+app = Flask(__name__)
+app.config['DEBUG'] = True
+```
+2. 通过update方法
+
+因为app.config是flask.config.Config的实例，而Config类是继承自dict，因此可以通过update方法：
+
+```python
+app.config.update(
+   DEBUG=True,
+   SECRET_KEY='...'
+)
+```
+3. 使用专门的配置文件存储配置项
+
+当项目配置项特别多时，可以把所有的配置项都放在一个模块中，然后通过加载模块的方式进行配置，假设有一个settings.py模块，专门用来存储配置项的，此时就可以通过app.config.from_object()方法进行加载，并且该方法既可以接收模块的字符串名称，也可以是模块对象：
+
+```python
+# 1. 通过模块字符串
+app.config.from_object('settings')
+# 2. 通过模块对象
+import settings
+app.config.from_object(settings)
+
+```
+4. 通过app.config.from_pyfile()方法加载配置文件
+
+```python
+app.config.from_pyfile('settings.py',silent=True)
+# silent=True表示如果配置文件不存在的时候不会抛出异常，默认是为False，会抛出异常。
+```
+注：  
+- settings.py文件的后缀名不能少。
+- 这种方式加载配置文件，不局限于只能使用`py`文件，普通的`txt`文件同样也适合。
+flask具体的内置配置项，[点这里](http://flask.pocoo.org/docs/0.12/config/#builtin-configuration-values)查看
+
+## URL中的传参方式
