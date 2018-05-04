@@ -213,3 +213,90 @@ def my_list(page):
  # url=/login/?next=%2F
  ```
 最后，强烈建议以后在处理url的时候，使用`url_for`来反转url。
+
+## 自定义URL转换器
+自定义URL转换器多用在Flask内置数据类型的转换器不能满足当前需求的情况。
+
+**自定义URL时的注意事项**
+- 转换器是一个类，且必须继承自werkzeug.routing.BaseConverter。
+- 在转换器类中，实现to_python(self,value)方法，这个方法的返回值将会传递到view函数中作为参数。
+- 在转换器类中，实现to_url(self,values)方法，这个方法的返回值将会在调用url_for函数的时候生成符合要求的URL形式。
+
+**示例1：自定义URL匹配手机号码格式转换器**
+```python
+from flask import Flask
+from werkzeug.routing import BaseConverter
+
+
+app = Flask(__name__)
+
+class TelephoneConveter(BaseConverter):
+    regex = r'1[34578]\d{9}'
+
+app.url_map.converters['tel'] = TelephoneConveter
+
+@app.route("/telephone/<tel:my_tel>/")
+def my_tel(my_tel):
+    return "您的手机号码是：{}".format(my_tel)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9000, debug=True)
+```
+浏览器访问：http://127.0.0.1:9000/telephone/13683137989/
+
+**示例2：**
+普通方法：
+```python
+@app.route("/posts/<boards>/")
+def posts(boards):
+    res = boards.split("+")
+    print(res)
+    return "提交的结果是：{}".format(res)
+```
+http://127.0.0.1:9000/posts/a+b/  ->  提交的结果是：['a', 'b']
+
+当有多个视图函数都要实现类似功能时，就要写多次split方法。这时就可以使用自定义URL的方式实现：
+```python
+from flask import Flask
+from werkzeug.routing import BaseConverter
+
+app = Flask(__name__)
+
+class ListConveter(BaseConverter):
+    def to_python(self, value):
+        value = value.split("+")
+        return value
+
+app.url_map.converters['list'] = ListConveter
+
+@app.route("/posts/<boards>/")
+def posts(boards):
+    return "提交的结果是：{}".format(boards)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9000, debug=True)
+```
+反转URL：
+```python
+from flask import Flask, url_for
+from werkzeug.routing import BaseConverter
+
+app = Flask(__name__)
+
+class ListConveter(BaseConverter):
+    def to_url(self, value):
+        return "+".join(value)
+
+app.url_map.converters['list'] = ListConveter
+
+@app.route("/")
+def helloworld():
+    return url_for("posts", boards=['a', 'b'])
+
+@app.route("/posts/<list:boards>/")
+def posts(boards):
+    return boards
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9000, debug=True)
+```
