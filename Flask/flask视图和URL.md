@@ -119,6 +119,97 @@ app.config.from_pyfile('settings.py',silent=True)
 注：  
 - settings.py文件的后缀名不能少。
 - 这种方式加载配置文件，不局限于只能使用`py`文件，普通的`txt`文件同样也适合。
+
 flask具体的内置配置项，[点这里](http://flask.pocoo.org/docs/0.12/config/#builtin-configuration-values)查看
 
-## URL中的传参方式
+## URL与视图函数的映射
+传递参数的语法：`/<参数名>/`。然后在视图函数中，也要定义同名的参数。
+
+**参数的数据类型**
+1. 如果没有指定具体的数据类型，那么默认就是使用`string`数据类型。
+2. `int`数据类型只能传递`int`类型。
+3. `float`数据类型只能传递`float`类型。
+4. `path`数据类型和`string`有点类似，都是可以接收任意的字符串，但是`path`可以接收路径，也就是说可以包含斜杠。
+5. `uuid`数据类型只能接收符合`uuid`的字符串。`uuid`是一个全宇宙都唯一的字符串，一般可以用来作为表的主键。
+6. `any`数据类型可以在一个`url`中指定多个路径。
+
+**具体示例如下**
+```python
+@app.route('/')
+def hello_world():
+    return "Hello World"
+
+@app.route("/list")
+def article_list():
+    return "article list"
+
+@app.route("/p/<float:article_id>")
+def article_detail(article_id):
+    return "你请求的文章是：{}".format(article_id)
+
+@app.route("/article/<path:test>/")
+def test_article(test):
+    return "test article: {}".format(test)
+
+# uuid示例: a8098c1a-f86e-11da-bd1a-00112444be1e.
+# uuid问题：https://stackoverflow.com/questions/534839/how-to-create-a-guid-uuid-in-python
+@app.route("/u/<uuid:user_id>/")
+def user_detail(user_id):
+    return "用户个人中心页面：{}".format(user_id)
+
+# /blog/<id>/
+# /user/<id>/
+@app.route("/<any(blog, articles):url_path>/<id>/")
+def detail(url_path, id):
+    if url_path == "blog":
+        return "博客详情：{}".format(id)
+    else:
+        return "文章详情."
+
+# http://127.0.0.1:9000/d?wd=abcdfg&ie=utf8
+@app.route("/d")
+def d():
+    wd = request.args.get("wd")
+    ie = request.args.get("ie")
+    print("ie: {}".format(ie))
+    return '您通过查询字符串的方式传递的参数是：{}'.format(wd)
+```
+注：如果页面的想要做`SEO`优化，即想要被搜索引擎搜索到，则推荐使用path的形式（将参数嵌入到路径中）。如果不在乎搜索引擎优化，就可以使用查询字符串的形式（?key=value）。
+
+**Python下UUID字符串的生成**
+```python
+In [1]: import uuid
+
+In [2]: uuid.uuid4()
+Out[2]: UUID('177f4749-0a08-4d3f-9423-86c0e996b6e8')
+
+In [3]: uuid.uuid4()
+Out[3]: UUID('9850a800-5168-43da-87d4-ccd8a305971e')
+
+In [4]:
+```
+
+## 构造URL（url_for）
+**url_for的基本使用**  
+`url_for`的第一个参数是视图函数的名字的字符串。后面的参数被用来传递给`url`。如果传递的参数之前在`url`中已经定义了，那么这个参数就会被当成`path`的形式给到`url`。如果这个参数之前没有在`url`中定义，那么将变成以查询字符串的形式放到`url`中。
+```python
+@app.route("/")
+def hello_world():
+    return url_for('my_list',page=1,count=2)
+
+@app.route('/post/list/<page>/')
+def my_list(page):
+    return 'my list'
+```
+浏览器访问：http://127.0.0.1:9000/  -> /post/list/1/?count=2
+
+**url_for的作用**  
+- 未来如果修改了`URL`，但没有修改该URL对应的函数名，就不用到处去替换URL了。
+- `url_for`会自动的处理那些特殊的字符，不需要手动去处理。
+
+ ```python
+ url = url_for('login',next='/')
+ # 会自动的将/编码，不需要手动去处理。
+ # url=/login/?next=%2F
+ ```
+最后，强烈建议以后在处理url的时候，使用`url_for`来反转url。
