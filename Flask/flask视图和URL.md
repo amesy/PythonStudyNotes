@@ -300,3 +300,162 @@ def posts(boards):
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=9000, debug=True)
 ```
+
+## URL唯一
+Flask的URL规则是基于`Werkzeug`的路由模块。这个模块的思想是基于Apache以及更早的HTTP服务器的主张，希望保证优雅且唯一的URL。
+
+在定义url的时候，一定要记得在最后加一个斜杠(/)。
+- 如果加了斜杠，在浏览器中访问这个url时结尾不加斜杠，会被重定向到带斜线的URL上去。这样有助于避免搜索引擎搜索同一个页面两次。
+- 如果不加斜杠，在浏览器中访问这个url时结尾加了斜杠，就会产生一个404（"Not Found"）错误。这样用户体验不太好。
+- 搜索引擎会将不加斜杠的和加斜杠的视为两个不同的url。而其实加和不加斜杠的都是同一个url，这样就会给搜索引擎造成误解。加了斜杠，就不会出现没有斜杠的情况。
+
+## 指定HTTP请求
+在网络请求中有许多请求方式，比如：GET、POST、DELETE、PUT等。最常用的就是`GET`和`POST`请求。
+- `GET`请求：只会在服务器上获取资源，不会更改服务器的状态。这种请求方式推荐使用`GET`请求。
+- `POST`请求：会给服务器提交一些数据或者文件。一般POST请求是会对服务器的状态产生影响，这种请求推荐使用`POST`请求。
+
+- 关于参数传递：
+    * `GET`请求：把参数放到`url`中，通过`?key=value`的形式传递。因为会把参数放到url中，不太安全。
+
+    * `POST`请求：把参数放到`Form Data`中。避免了被偷瞄的风险，但是如果别人想要偷看你的密码，其实可以通过抓包的形式。因为POST请求可以提交一些数据给服务器，比如可以发送文件，那么这就增加了安全风险。所以POST请求，对于那些有经验的黑客来讲，其实是更不安全的。说它安全是相对于GET请求而言的。
+
+- 在Flask中，`route`方法默认只能使用`GET`的方式请求这个url，如果想要设置自己的请求方式，那么应该传递一个`methods`参数。
+
+注：method参数是一个列表的形式。
+```python
+@app.route('/login/',methods=['GET','POST'])
+def login():
+    pass
+```
+以上装饰器将让login的URL既能支持GET又能支持POST。
+
+## 页面跳转和重定向
+重定向分为永久性重定向和临时性重定向，在页面上体现的操作就是浏览器会从一个页面自动跳转到另外一个页面。比如用户访问了一个需要权限的页面，但是该用户当前并没有登录，因此我们应该给他重定向到登录页面。
+
+- 永久性重定向：http的状态码是301，多用于旧网址被废弃了要转到一个新的网址确保用户的访问，最经典的就是京东网站，你输入www.jingdong.com的时候，会被重定向到www.jd.com，因为jingdong.com这个网址已经被废弃了，被改成jd.com，所以这种情况下应该用永久重定向。
+- 临时性重定向：http的状态码是302，表示页面的临时性跳转。比如访问一个需要权限的网址，如果当前用户没有登录，应该重定向到登录页面，这种情况下，应该用临时性重定向。
+
+在flask中，重定向通过flask.redirect(location,code=302)这个函数来实现，location表示需要重定向到的URL，应该配合之前讲的url_for()函数来使用，code表示采用哪个重定向，默认是302也即临时性重定向，可以修改成301来实现永久性重定向。
+
+```python
+from flask import Flask, url_for, request, redirect
+from werkzeug.routing import BaseConverter
+
+
+app = Flask(__name__)
+
+@app.route("/login/", methods=["get", "post"])
+def login():
+    return "login page"
+
+
+@app.route("/profile/", methods=["get", "post"])
+def profile():
+    name = request.args.get("name")
+    if not name:
+        return redirect(url_for("login"))
+    else:
+        return name
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9000, debug=True)
+```
+http://127.0.0.1:9000/profile/?name=amesy  -> amesy
+
+## 响应（Response）
+视图函数的返回值会被自动转换为一个响应对象，Flask的转换逻辑如下：
+
+- 如果返回的是一个合法的响应对象，则直接返回。
+
+- 如果返回的是一个字符串，那么Flask会重新创建一个`werkzeug.wrappers.Response`对象，Response将该字符串作为主体，状态码为200，MIME类型为text/html，然后返回该Response对象。
+
+- 如果返回的是一个元组，元组中的数据类型是(response,status,headers)。status值会覆盖默认的200状态码，headers可以是一个列表或者字典，作为额外的消息头。元组内不一定三个元素都要写。返回的元组，其实在底层也是包装成了一个`Response`对象。
+
+- 如果以上条件都不满足，Flask会假设返回值是一个合法的WSGI应用程序，并通过`Response.force_type(rv,request.environ)`转换为一个请求对象。
+
+**示例1：直接使用Response创建**
+
+```python
+from werkzeug.wrappers import Response
+
+@app.route('/about/')
+def about():
+    resp = Response(response='about page',status=200,content_type='text/html;charset=utf-8')
+    return resp
+```
+**示例2：使用make_response函数来创建Response对象**
+
+这个方法可以设置额外的数据，比如设置cookie，header信息等。
+
+```python
+from flask import make_response
+
+@app.route('/about/')
+def about():
+    return make_response('about page')
+```
+**示例3：通过返回元组的形式**
+
+```python
+@app.errorhandler(404)
+def not_found():
+    return 'not found',404
+```
+
+**示例4：自定义响应**
+
+- 必须继承自Response类。
+- 实现类方法force_type(cls,rv,environ=None)。
+- 必须指定app.response_class为你自定义的Response。
+
+注：`Restful API`都是通过JSON的形式进行传递，如果你的后台跟前台进行交互，所有的URL都是发送JSON数据，此时就可以自定义一个叫做JSONResponse的类来代替Flask自带的Response类。
+
+```python
+from flask import Flask, Response, jsonify, render_template
+
+# flask = werkzeug+sqlalchemy+jinja2
+
+app = Flask(__name__)
+
+# 将视图函数中返回的字典，转换成json对象，然后返回。
+# restful-api
+class JSONResponse(Response):
+    @classmethod
+    def force_type(cls, response, environ=None):
+        """
+        这个方法只有视图函数返回非字符、非元组、非Response对象才会调用.
+        response：视图函数的返回值.
+        """
+        if isinstance(response, dict):
+            # jsonify除了将字典转换成json对象，还将改对象包装成了一个Response对象
+            response = jsonify(response)
+        return super(JSONResponse, cls).force_type(response, environ)
+
+app.response_class = JSONResponse
+
+@app.route("/")
+def hello_world():
+    # Response("Hello World!", status=200, mimetype="text/html")
+    return "Hello World"
+
+@app.route("/list1/")
+def list1():
+    resp = Response("list1")
+    resp.set_cookie('country', 'china')
+    return resp
+
+@app.route("/list2/")
+def list2():
+    return "list", 200, {"X-NAME": "x-name"}
+
+@app.route("/list3/")
+def list3():
+    return {"username": "amesy", "age": 18}
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9000, debug=True)
+```
+
+注意以上例子，如果不写`app.response_class = JSONResponse`，将不能正确的将字典返回给客户端。因为字典不在Flask的响应类型支持范围中，那么将调用`app.response_class`这个属性的`force_type`类方法，而`app.response_class`的默认值为Response，因此会调用`Response.force_class()`这个类方法，它有一个默认的转换成字符串的算法，但是这个算法不能满足我们的需求。因此，我们要设置`app.response_class=JSONResponse`，然后重写JSONResponse中的force_type类方法，在这个方法中将字典转换成JSON格式的字符串后再返回。
