@@ -170,8 +170,8 @@ login.html代码如下：
 模板语法规则:
 
 >{{ 用来存放变量 }} <br />
-{# 用来注释 #} <br />
-{% 用来执行函数或者逻辑代码 %} <br />
+ { # 用来注释 #} <br />
+ {% 用来执行函数或者逻辑代码 %} <br />
 
 属性访问规则：
 
@@ -255,7 +255,7 @@ def index():
 
     return render_template("index.html", **context)
 ```
-
+html:
 ```html
 <body>
     <p>位置的绝对值是：{{ position | abs }}</p>
@@ -284,7 +284,7 @@ def cut(value):
     value = value.replace("hello", "你好")
     return value
 ```
-
+html:
 ```html
 <p>{{ signature | cut | striptags}}</p>
 ```
@@ -321,7 +321,154 @@ def handle_time(time):
     else:
         return time
 ```
-
+html:
 ```html
 <p>发表时间：{{ create_time|handle_time }}</p>
 ```
+
+### 模板控制语句
+
+所有的控制语句都是放在`{% ... %}`中，并且有一个语句`{% endxxx %}`来进行结束，`Jinja`中常用的控制语句有`if/for..in..`
+
+#### if条件语句
+
+i条件判断语句必须放在`{% if statement %}`中间，并且还必须有结束的标签`{% endif %}`。
+
+和`python`中的类似，可以使用`>，<，<=，>=，==，!=`来进行判断，也可以通过`and，or，not，()`来进行逻辑合并操作。
+
+示例：
+
+```python
+{% if score >= 90 %}
+    <p>优秀</p>
+{% elif score > 75 and score <90 %}
+    <p>良好</p>
+{% else %}
+    <p>差</p>
+{% endif %}
+```
+
+#### for循环语句
+
+在jinja2中的for循环，跟python中的for循环一样，也是`for...in...`的形式。并且也可以遍历所有的序列以及迭代器。但唯一不同的是，jinja2中的for循环没有break和continue语句。
+
+示例：
+
+```python
+@app.route("/")
+def fors():
+    info = {
+        'books': [
+            {
+                'name': '三国演义',
+                'author': '罗贯中',
+                'price': 110
+            }, {
+                'name': '西游记',
+                'author': '吴承恩',
+                'price': 109
+            }, {
+                'name': '红楼梦',
+                'author': '曹雪芹',
+                'price': 120
+            }, {
+                'name': '水浒传',
+                'author': '施耐庵',
+                'price': 119
+            }
+        ]
+    }
+
+    return render_template("fors.html", **info)
+```
+
+html：
+
+```html
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>书名</th>
+                <th>作者</th>
+                <th>价格</th>
+                <th>总数</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+                {% if loop.first %}
+                    <tr style="background: red;">
+                {% elif loop.last %}
+                    <tr style="background: pink;">
+                {% else %}
+                    <tr>
+                {% endif %}
+                    <td>{{ loop.index0 }}</td>
+                    <td>{{ book.name }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.price }}</td>
+                    <td>{{ loop.length }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+```
+
+练习：九九乘法表
+
+```python
+<table border="1">
+    <tbody>
+        {% for x in range(1,10) %}
+            <tr>
+                {% for y in range(1,10) if y <= x %}
+                    <td>{{ y }}*{{ x }}={{ x*y }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+```
+
+### 宏和import语句
+
+宏类似常规编程语言中的函数。它们用于把常用行为作为可重用的函数，取代手动重复的工作。
+
+宏渲染表单元素的示例：
+
+```html 
+<!--定义宏-->
+{% macro input(name="", value="", type="text")   %}
+    <input type="{{ type }}" name="{{ name }}" value="{{ value }}">
+{% endmacro %}
+
+<!--调用宏-->
+<h1>用户登录</h1>
+<table>
+    <tbody>
+        <tr>
+            <td>用户名：</td>
+            <td>{{ input('username') }}</td>
+        </tr>
+        <tr>
+            <td>密码：</td>
+            <td>{{ input("password",type="password") }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>{{ input(value="提交",type="submit") }}</td>
+        </tr>
+    </tbody>
+</table>
+```
+
+**import - 导入宏**
+
+1. `import "宏文件的路径" as xxx`。
+2. `from '宏文件的路径' import 宏的名字 [as xxx]`。
+3. 宏文件路径，不要以相对路径去寻找，都要以`templates`作为绝对路径去找。
+4. 如果想要在导入宏的时候，就把当前模版的一些参数传给宏所在的模版，那么就应该在导入的时候使用`with context`。示例：`from 'xxx.html' import input with context`。
+
