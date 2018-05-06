@@ -19,7 +19,7 @@
 ###  框架学习 - Flask 
 
 -   [flask视图和URL](https://github.com/amesy/PythonStudyNotes/blob/master/Flask/flask%E8%A7%86%E5%9B%BE%E5%92%8CURL.md) 
--   Jinja2模板
+-   [Jinja2模板](https://github.com/amesy/PythonStudyNotes/blob/master/Flask/Jinja2%E6%A8%A1%E6%9D%BF.md)
 
 
 
