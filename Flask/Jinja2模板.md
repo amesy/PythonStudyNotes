@@ -439,7 +439,7 @@ html：
 
 宏渲染表单元素的示例：
 
-```html 
+```html
 <!--定义宏-->
 {% macro input(name="", value="", type="text")   %}
     <input type="{{ type }}" name="{{ name }}" value="{{ value }}">
@@ -470,5 +470,160 @@ html：
 1. `import "宏文件的路径" as xxx`。
 2. `from '宏文件的路径' import 宏的名字 [as xxx]`。
 3. 宏文件路径，不要以相对路径去寻找，都要以`templates`作为绝对路径去找。
-4. 如果想要在导入宏的时候，就把当前模版的一些参数传给宏所在的模版，那么就应该在导入的时候使用`with context`。示例：`from 'xxx.html' import input with context`。
+4. 如果想要在导入宏的时候，就把当前模板的一些参数传给宏所在的模板，那么就应该在导入的时候使用`with context`。示例：`from 'xxx.html' import input with context`。
 
+### include语句
+
+`include`语句可以把一个模板引入到另外一个模板中，类似于把一个模板的代码copy到另外一个模板的指定位置。
+
+`include`标签，如果想要使用父模版中的变量，直接用就可以使用，不需要使用`with context`。
+
+`include`的路径，跟`import`一样，直接从`templates`根目录下去找，不要以相对路径去找。
+
+示例：
+
+html
+
+```html
+<body>
+    {% include "common/header.html" %}
+    <div class="content">
+        中间的
+    </div>
+    {% include "common/footer.html" %}
+</body>
+```
+
+### set语句和with语句
+
+想要在模板中添加变量就需要使用到赋值语句（set）。
+
+示例如下：
+
+html
+
+```html
+{% set username='amesy' %}
+<p>用户名：{{ username }}</p>
+```
+>   一旦定义了这个变量，那么在后面的代码中都可以使用这个变量，就类似于Python的变量定义。
+>
+>   set 还可以赋值列表和元组。
+
+赋值语句创建的变量在其之后都是有效的，如果不想让一个变量污染全局环境，可以使用`with`语句来创建一个内部的作用域，将`set`语句放在其中，这样创建的变量只在`with`代码块中才有效。
+
+示例：
+
+html
+
+```html
+{% with classroom = 'first class' %}
+<p>班级：{{ classroom }}</p>
+{% endwith %}
+```
+
+with语句也不一定要跟一个变量，可以定义一个空的with语句，以后在with块中通过set定义的变量，就只能在这个with块中使用了：
+
+```html
+{% with %}
+    {% set classroom = 'second class' %}
+    <p>班级：{{ classroom }}</p>
+{% endwith %}
+```
+### 加载静态文件
+
+Web应用中会出现大量的静态文件来使得网页更加生动美观。静态文件主要包括有`CSS`样式文件、`JavaScript`脚本文件、图片文件、字体文件等静态资源。
+
+加载静态文件使用的是`url_for`函数。然后第一个参数需要为`static`，第二个参数需要为一个关键字参数`filename='路径'`。
+
+示例：
+
+html
+
+```html
+<head>
+    <meta charset="UTF-8">
+    <title>example</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename="css/index.css") }}">
+    <script src="{{ url_for("static",filename='js/index.js') }}"></script>
+</head>
+<body>
+<img src="{{ url_for("static",filename='imgs/buyudaren.jpg') }}" alt="">
+</body>
+```
+
+注：路径查找，要以当前项目的`static`目录作为根目录。
+
+### 模板继承
+
+Flask中的模板可以继承。通过继承可以把模板中许多重复出现的元素抽取出来，放在父模板中，并且父模板通过定义block给子模板开一个口，子模板根据需要，再实现这个block。 这样以后修改起来也比较方便。
+
+**模板继承语法**
+
+使用`extends`语句，来指明继承的父模板。父模板的路径，也是相对于`templates`文件夹下的绝对路径。示例代码如下：
+
+```html
+{% extends "base.html" %}
+```
+
+**block语法**
+
+一般在父模板中会定义一些公共的代码。子模板可能要根据具体的需求实现不同的代码时，父模版就应该有能力提供一个接口给子模板用。从而实现具体业务需求的功能。
+
+在父模板中：
+
+```html
+{% block block的名字 %}
+{% endblock %}
+```
+
+在子模板中：
+
+```html
+{% block block的名字 %}
+{% endblock %}
+```
+
+**调用父模版代码block中的代码**
+
+默认情况下子模板如果实现了父模板定义的block，那么如果子模板block中也实现了与父模板中相同功能的代码，这时子模板就会覆盖掉父模板中的代码。如果想要在子模板中仍然保持父模板中的代码，那么可以使用`{{ super() }}`来实现。
+
+示例如下：
+
+父模板：
+
+```html
+{% block body_block %}
+        <p style="background: red;">这是父模板中的代码</p>
+    {% endblock %}
+```
+
+子模板：
+
+```html
+{% block body_block %}
+    {{ super() }}
+    <p style="background: green;">我是子模板中的代码</p>
+{% endblock %}
+```
+
+**调用另外一个block中的代码**
+
+如果想要在另外一个模版中使用其他模版中的代码。那么可以通过`{{ self.其他block名字() }}`。
+
+示例代码如下：
+
+```html
+{% block title %}
+    这里是标题
+{% endblock %}
+
+{% block body_block %}
+    {{ self.title() }}
+    <p style="background: green;">我是子模板中的代码</p>
+{% endblock %}
+```
+
+**其他注意事项**
+- 子模板中的代码，第一行应该是`extends`。
+- 子模板中，如果要实现自己的代码，应该放到block中。如果放到其他地方，则不会被渲染。
