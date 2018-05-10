@@ -371,7 +371,15 @@ from flask import Blueprint
 cms_bp = Blueprint("cms", __name__, subdomain="live")
 ```
 
-浏览器访问：http://live.amesy.me:8000/
+注：
+
+>   本地测试时，可以将域名对应ip加入本机hosts文件中来完成实验。
+>
+>   hosts PATH：C:\Windows\System32\drivers\etc 
+
+
+
+最后，浏览器访问：http://live.amesy.me:8000/
 
 
 
