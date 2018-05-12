@@ -113,3 +113,6 @@ if form.validate():
     ...
 ```
 
+注： 
+
+>   wtforms 和 flask_wtf 如果没有安装，需要先使用 pip 进行安装。
